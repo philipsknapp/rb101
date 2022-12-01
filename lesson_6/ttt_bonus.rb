@@ -72,6 +72,31 @@ def player_move(brd)
   brd[square] = PLAYER_MARKER
 end
 
+def computer_move(brd)
+  move = nil
+
+  ["Computer", "Player"].each do |competitor|
+    WINNING_LINES.each do |line|
+      break if move
+      move = winning_square(brd, line, competitor) # offense
+    end
+    break if move
+  end  
+  
+  move = 5 if move == nil && brd[5] == INITIAL_MARKER
+  move = empty_squares(brd).sample if move == nil
+  p "Computer plays to square #{move}"
+  brd[move] = COMPUTER_MARKER
+end
+
+def place_piece!(brd, competitor)
+  if competitor == 'Player'
+    player_move(brd)
+  else
+    computer_move(brd)
+  end
+end
+
 def winning_square(brd, line, competitor)
   marker = (competitor == "Player" ? PLAYER_MARKER : COMPUTER_MARKER)
   if brd.values_at(*line).count(marker) == 2 &&
@@ -79,21 +104,6 @@ def winning_square(brd, line, competitor)
     return brd.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys[0]
   end
   nil
-end
-
-def computer_move(brd)
-  move = nil
-
-  WINNING_LINES.each do |line|
-    move = winning_square(brd, line, "Computer") # offense
-    p "OFFENSIVE WIN DETECTED" if move
-    break if move
-    move = winning_square(brd, line, "Player") # defense
-    break if move
-  end
-
-  move = empty_squares(brd).sample unless move
-  brd[move] = COMPUTER_MARKER
 end
 
 def board_full?(brd)
@@ -118,18 +128,25 @@ end
 loop do
   player_wins = 0
   computer_wins = 0
-
+  prompt "Who should go first? (p)layer, (c)omputer, or should I choose (r)andomly?"
+  first_move = case gets.chomp.downcase[0]
+          when 'p' then 'Player'
+          when 'c' then 'Computer'
+          when 'r' then ['Player', 'Computer'].sample
+          else
+            puts 'Invalid input! Choosing first player at random.'
+            ['Player', 'Computer'].sample
+          end
+          
   loop do # tracks games to 5
     board = initialize_board
     display_board(board)
+    current_player = first_move
 
-    loop do # loop of moves until someone moves
-      player_move(board)
+    loop do # loop of moves until someone wins
+      place_piece!(board, current_player)
       display_board(board)
-      break if someone_won?(board) || board_full?(board)
-
-      computer_move(board)
-      display_board(board)
+      current_player = (current_player == 'Player' ? 'Computer' : 'Player')
       break if someone_won?(board) || board_full?(board)
     end
 
