@@ -1,5 +1,7 @@
 HIGHEST_SCORE = 21
 
+GAMES_TO_WIN = 5
+
 SCORE = { 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9,
           10 => 10, :jack => 10, :queen => 10, :king => 10, :ace => 1 }
 
@@ -66,6 +68,8 @@ end
 loop do
   system 'clear'
   puts "Welcome to #{HIGHEST_SCORE}!"
+  puts "The first player to win #{GAMES_TO_WIN} games " + \
+       "will be the grand winner. Ready?"
   player_wins = 0
   dealer_wins = 0
 
@@ -157,8 +161,8 @@ loop do
     puts "You have won #{player_wins} game#{pluralize(player_wins)}"
     puts "The dealer has won #{dealer_wins} game#{pluralize(dealer_wins)}"
 
-    if player_wins >= 5 || dealer_wins >= 5
-      puts "#{player_wins >= 5 ? 'You are' : 'The dealer is'} the grand winner."
+    if player_wins >= GAMES_TO_WIN || dealer_wins >= GAMES_TO_WIN
+      puts "#{player_wins >= GAMES_TO_WIN ? 'You are' : 'The dealer is'} the grand winner."
       puts "************************"
       break
     else

@@ -4,7 +4,6 @@ def prompt(message)
   puts "=> #{message}"
 end
 
-
 def display_results(choice, computer_choice)  
   if (choice == 'rock' && computer_choice == 'scissors') ||
       (choice == 'paper' && computer_choice == 'rock') ||
